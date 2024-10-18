@@ -15,6 +15,11 @@ jobs:
       - run:
           name: Unit Tests
           command: mvn test  
+      - run:
+          name: Generate Coverage Report
+          command: mvn jacoco:report
+      - codecov/upload:
+          file: target/site/jacoco/jacoco.xml
       
 
 workflows:
