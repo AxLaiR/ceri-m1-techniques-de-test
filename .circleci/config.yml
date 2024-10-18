@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  codecov: codecov/codecov@4.0.1
+
 jobs:
   build-and-test:
     docker:
@@ -22,11 +25,6 @@ workflows:
           filters:
             branches:
               only: master
-
-orbs:
-  codecov: codecov/codecov@4.0.1
-workflows:
-  upload-to-codecov:
-    jobs:
-      - checkout 
-      - codecov/upload
+      - codecov/upload:
+          requires:
+            - build-and-test
