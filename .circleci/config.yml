@@ -16,10 +16,14 @@ jobs:
           name: Unit Tests
           command: mvn test  
       - run:
+          name: Checkstyle
+          command: mvn checkstyle:check  
+      - run:
           name: Generate Coverage Report
           command: mvn jacoco:report
       - codecov/upload:
           file: target/site/jacoco/jacoco.xml
+      
       
 
 workflows:
