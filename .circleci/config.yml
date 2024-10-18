@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build-and-test:
     docker:
-      - image: cimg/openjdk:8.0  
+      - image: cimg/openjdk:11.0  
     steps:
       - checkout
       - run:
@@ -12,6 +12,7 @@ jobs:
       - run:
           name: Unit Tests
           command: mvn test  
+      
 
 workflows:
   version: 2
@@ -21,3 +22,11 @@ workflows:
           filters:
             branches:
               only: master
+
+orbs:
+  codecov: codecov/codecov@4.0.1
+workflows:
+  upload-to-codecov:
+    jobs:
+      - checkout 
+      - codecov/upload
