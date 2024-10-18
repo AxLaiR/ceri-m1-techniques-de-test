@@ -91,8 +91,7 @@
                 </execution>
             </executions>
             </plugin>
-        </plugins>
-         <plugin>
+            <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-checkstyle-plugin</artifactId>
             <version>3.1.2</version> 
@@ -110,7 +109,8 @@
                 <consoleOutput>true</consoleOutput> 
                 <failsOnError>true</failsOnError>
             </configuration>
-        </plugin>
+            </plugin>
+        </plugins>
          <testSourceDirectory>src/test/java</testSourceDirectory>
     </build>
 </project>
