@@ -34,4 +34,5 @@ workflows:
           filters:
             branches:
               - master
-              - gh-pages
+            ignore:
+                - gh-pages
