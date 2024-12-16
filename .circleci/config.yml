@@ -24,14 +24,20 @@ jobs:
       - codecov/upload:
           file: target/site/jacoco/jacoco.xml
       
-      - name: Generate documentation
-        run: mvn -B javadoc:javadoc
-      
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./target/site/apidocs
+      - run:
+          name: Générer les Javadocs
+          command: mvn javadoc:javadoc
+      - run:
+          name: Déployer les Javadocs sur GitHub Pages
+          command: |
+            git config --global user.name "circleci"
+            git config --global user.email "circleci@example.com"
+            git clone --branch gh-pages https://github.com/<votre-utilisateur>/<nom-de-votre-depot>.git gh-pages
+            cp -r target/site/apidocs/* gh-pages/docs/
+            cd gh-pages
+            git add docs/
+            git commit -m "Mise à jour des Javadocs"
+            git push origin gh-pages
       
       
 
