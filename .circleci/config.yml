@@ -40,7 +40,6 @@ jobs:
             git commit -m "Javadocs générées par CircleCI"
             git push origin gh-pages
       
-      
 
 workflows:
   version: 2
