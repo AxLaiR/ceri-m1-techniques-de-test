@@ -28,9 +28,6 @@ jobs:
           name: Générer les Javadocs
           command: mvn javadoc:javadoc
       - run:
-        name: Debug Javadoc Directory
-        command: ls -la target/
-      - run:
           name: Déployer les Javadocs sur GitHub Pages
           command: |
             git config --global user.name "circleci"
