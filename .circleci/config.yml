@@ -23,6 +23,10 @@ jobs:
           command: mvn jacoco:report
       - codecov/upload:
           file: target/site/jacoco/jacoco.xml
+      
+      - name: Generate documentation
+        run: mvn -B javadoc:javadoc
+      
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
