@@ -32,11 +32,12 @@ jobs:
           command: |
             git config --global user.name "circleci"
             git config --global user.email "circleci@example.com"
-            git clone --branch gh-pages https://github.com/<votre-utilisateur>/<nom-de-votre-depot>.git gh-pages
-            cp -r target/site/apidocs/* gh-pages/docs/
+            git clone --branch gh-pages https://$GITHUB_TOKEN@github.com/AxLaiR/ceri-m1-techniques-de-test.git gh-pages
+            rm -rf gh-pages/*
+            cp -r target/site/apidocs/* gh-pages/
             cd gh-pages
-            git add docs/
-            git commit -m "Mise à jour des Javadocs"
+            git add .
+            git commit -m "Javadocs générées par CircleCI"
             git push origin gh-pages
       
       
