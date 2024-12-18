@@ -1,66 +1,79 @@
 package fr.univavignon.pokedex.api;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import org.mockito.Mockito;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-@ExtendWith(MockitoExtension.class)
 public class IPokedexTest {
-    Pokemon pokemon = new Pokemon(0, "Bulbizarre", 613, 64, 4000, 500, 613, 64, 4000, 500);
-    @Mock
-    IPokedex pokedex;
 
-    @Test
-    void testSize() {
-        when(pokedex.size()).thenReturn(1);
-        assertEquals(1, pokedex.size());
+    private IPokedex pokedex;
+    private Pokemon bulbizarre;
+    private Pokemon aquali;
+    private List<Pokemon> pokemonList;
+
+    @BeforeEach
+    public void setUp() throws PokedexException {
+        pokedex = Mockito.mock(IPokedex.class);
+        bulbizarre = new Pokemon(0, "Bulbizarre", 126, 126, 90, 613, 64, 4000, 4, 56.0);
+        aquali = new Pokemon(134, "Aquali", 186, 168, 260, 2729, 202, 5000, 4, 100.0);
+        pokemonList = new ArrayList<>();
+        pokemonList.add(bulbizarre);
+        pokemonList.add(aquali);
+
+        Mockito.when(pokedex.size()).thenReturn(pokemonList.size());
+        Mockito.when(pokedex.addPokemon(bulbizarre)).thenReturn(0);
+        Mockito.when(pokedex.getPokemon(0)).thenReturn(bulbizarre);
+        Mockito.when(pokedex.getPokemon(134)).thenReturn(aquali);
+        Mockito.when(pokedex.getPokemons()).thenReturn(pokemonList);
+        Mockito.when(pokedex.getPokemons(Mockito.any(Comparator.class))).thenAnswer(invocation -> {
+            pokemonList.sort(invocation.getArgument(0));
+            return pokemonList;
+        });
+        Mockito.when(pokedex.getPokemon(999)).thenThrow(new PokedexException("Invalid ID"));
     }
 
     @Test
-    void testAddPokemon() {
-        when(pokedex.addPokemon(pokemon)).thenReturn(0);
-        assertEquals(0, pokedex.addPokemon(pokemon));
+    public void testSize() {
+        assertEquals(2, pokedex.size());
     }
 
     @Test
-    void testGetPokemon() {
-        try {
-            when(pokedex.getPokemon(0)).thenReturn(pokemon);
-            assertEquals(pokemon, pokedex.getPokemon(0));
-        } catch (PokedexException e) {
-        }
+    public void testAddPokemon() {
+        int index = pokedex.addPokemon(bulbizarre);
+        assertEquals(0, index);
     }
 
     @Test
-    void testGetPokemonsThrowsException() {
-        try {
-            when(pokedex.getPokemon(1)).thenThrow(new PokedexException("Pokemon not found"));
-            pokedex.getPokemon(1);
-        } catch (PokedexException e) {
-            assertEquals("Pokemon not found", e.getMessage());
-        }
+    public void testGetPokemon() throws PokedexException {
+        Pokemon retrievedPokemon = pokedex.getPokemon(0);
+        assertNotNull(retrievedPokemon);
+        assertEquals("Bulbizarre", retrievedPokemon.getName());
+        assertEquals(613, retrievedPokemon.getCp());
     }
 
     @Test
-    void testListGetPokemons() {
-        ArrayList<Pokemon> pokemons = new ArrayList<Pokemon>();
-        pokemons.add(pokemon);
-        when(pokedex.getPokemons()).thenReturn(pokemons);
-        assertEquals(pokemons, pokedex.getPokemons());
+    public void testGetPokemonInvalidId() {
+        Exception exception = assertThrows(PokedexException.class, () -> pokedex.getPokemon(999));
+        assertEquals("Invalid ID", exception.getMessage());
     }
 
     @Test
-    void testSortedPokemonsList() {
-        ArrayList<Pokemon> pokemons = new ArrayList<Pokemon>();
-        pokemons.add(pokemon);
-        when(pokedex.getPokemons(PokemonComparators.NAME)).thenReturn(pokemons);
-        assertEquals(pokemons, pokedex.getPokemons(PokemonComparators.NAME));
+    public void testGetPokemons() {
+        List<Pokemon> pokemons = pokedex.getPokemons();
+        assertEquals(2, pokemons.size());
+        assertEquals("Bulbizarre", pokemons.get(0).getName());
+        assertEquals("Aquali", pokemons.get(1).getName());
     }
-    
+
+    @Test
+    public void testGetPokemonsSorted() {
+        List<Pokemon> sortedPokemons = pokedex.getPokemons(Comparator.comparingInt(Pokemon::getCp));
+        assertEquals("Bulbizarre", sortedPokemons.get(0).getName());
+        assertEquals("Aquali", sortedPokemons.get(1).getName());
+    }
 }
